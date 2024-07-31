@@ -7,6 +7,10 @@
 
 #import "SceneDelegate.h"
 #import "AppDelegate.h"
+#import "CalendarView/MRCalendarViewController.h"
+#import "TodoView/MRTodoViewController.h"
+#import "StatisticView/MRStatisticViewController.h"
+#import "TomatoClockView/MRTomatoClockViewController.h"
 
 @interface SceneDelegate ()
 
@@ -19,6 +23,15 @@
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+    
+    // SceneDelegate有一个window属性，我们需要给这个window属性赋值一个UIWindow对象，这个对象的frame设定为屏幕的大小；
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.windowScene = (UIWindowScene*)scene;
+
+    // 配置window的根视图为Tabbar
+    self.window.rootViewController = [self tabBarConfigure];
+    
+    [self.window makeKeyAndVisible]; // 设置为关键窗口
 }
 
 
@@ -58,4 +71,30 @@
 }
 
 
+// MARK: - TabBarConfigure
+
+/// 配置TabBar标签栏
+- (UITabBarController *)tabBarConfigure {
+    UITabBarController *rootTabBarController = [UITabBarController new];
+
+    // 日历视图
+    MRCalendarViewController *calendarViewController = [MRCalendarViewController new];
+    calendarViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"日历" image:[UIImage systemImageNamed:@"calendar"] tag:1];
+    
+    // 待办视图
+    MRTodoViewController *todoViewController = [MRTodoViewController new];
+    todoViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"待办" image:[UIImage systemImageNamed:@"text.badge.checkmark"] tag:2];
+    
+    // 统计视图
+    MRStatisticViewController *statisticViewController = [MRStatisticViewController new];
+    statisticViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"统计" image:[UIImage systemImageNamed:@"chart.xyaxis.line"] tag:3];
+    
+    // 番茄种视图
+    MRTomatoClockViewController *tomatoClockViewController = [MRTomatoClockViewController new];
+    tomatoClockViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"番茄钟" image:[UIImage systemImageNamed:@"timer"] tag:4];
+    
+    rootTabBarController.viewControllers = @[calendarViewController, todoViewController, statisticViewController, tomatoClockViewController];
+    
+    return rootTabBarController;
+}
 @end
