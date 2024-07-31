@@ -11,6 +11,7 @@
 #import "TodoView/MRTodoViewController.h"
 #import "StatisticView/MRStatisticViewController.h"
 #import "TomatoClockView/MRTomatoClockViewController.h"
+#import "StartView/MRStartViewController.h"
 
 @interface SceneDelegate ()
 
@@ -27,11 +28,23 @@
     // SceneDelegate有一个window属性，我们需要给这个window属性赋值一个UIWindow对象，这个对象的frame设定为屏幕的大小；
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.windowScene = (UIWindowScene*)scene;
-
-    // 配置window的根视图为Tabbar
-    self.window.rootViewController = [self tabBarConfigure];
     
-    [self.window makeKeyAndVisible]; // 设置为关键窗口
+    // NSUserDefaults是单例模式，此处创建一个对象方便使用
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    // 首次启动则打开启动页，当isNotFirstLaunch值为NO时是首次启动
+    if ([userDefaults boolForKey:@"isNotFirstLaunch"]) {
+        // 设置值为YES，则不是第一次启动，就会跳转到TabBar视图
+        [userDefaults setBool:YES forKey:@"isNotFirstLaunch"];
+        // 配置window根视图为启动页视图
+        self.window.rootViewController = [self startViewConfigure];
+    } else {
+        // 配置window根视图为Tabbar视图
+        self.window.rootViewController = [self tabBarConfigure];
+    }
+    
+    // 设置为关键窗口
+    [self.window makeKeyAndVisible];
 }
 
 
@@ -73,7 +86,16 @@
 
 // MARK: - TabBarConfigure
 
-/// 配置TabBar标签栏
+/// 配置启动页视图
+- (MRStartViewController *)startViewConfigure {
+    MRStartViewController *startViewController = [MRStartViewController new];
+    return startViewController;
+}
+
+
+// MARK: - TabBarConfigure
+
+/// 配置TabBar标签栏视图
 - (UITabBarController *)tabBarConfigure {
     UITabBarController *rootTabBarController = [UITabBarController new];
 
@@ -93,8 +115,11 @@
     MRTomatoClockViewController *tomatoClockViewController = [MRTomatoClockViewController new];
     tomatoClockViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"番茄钟" image:[UIImage systemImageNamed:@"timer"] tag:4];
     
+    // 添加到TabBar
     rootTabBarController.viewControllers = @[calendarViewController, todoViewController, statisticViewController, tomatoClockViewController];
     
     return rootTabBarController;
 }
+
+
 @end
