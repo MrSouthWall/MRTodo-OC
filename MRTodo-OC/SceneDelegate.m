@@ -25,21 +25,22 @@
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
     
-    // SceneDelegate有一个window属性，我们需要给这个window属性赋值一个UIWindow对象，这个对象的frame设定为屏幕的大小；
+    // SceneDelegate 有一个 window 属性，我们需要给这个 window 属性赋值一个 UIWindow 对象，这个对象的 frame 设定为屏幕的大小；
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.windowScene = (UIWindowScene*)scene;
     
-    // NSUserDefaults是单例模式，此处创建一个对象方便使用
+    // NSUserDefaults 是单例模式，此处创建一个对象方便使用
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
-    // 首次启动则打开启动页，当isNotFirstLaunch值为NO时是首次启动
-    if ([userDefaults boolForKey:@"isNotFirstLaunch"]) {
-        // 设置值为YES，则不是第一次启动，就会跳转到TabBar视图
-        [userDefaults setBool:YES forKey:@"isNotFirstLaunch"];
-        // 配置window根视图为启动页视图
+    [userDefaults setBool:NO forKey:@"isNotFirstLaunch"];
+
+    // 首次启动则打开启动页，当 isNotFirstLaunch 值为 NO 时是首次启动
+    if (![userDefaults boolForKey:@"isNotFirstLaunch"]) {
+        // 设置值为 YES，则不是第一次启动，就会跳转到 TabBar 视图
+        [userDefaults setBool:NO forKey:@"isNotFirstLaunch"];
+        // 配置 window 根视图为启动页视图
         self.window.rootViewController = [self startViewConfigure];
     } else {
-        // 配置window根视图为Tabbar视图
+        // 配置 window 根视图为 Tabbar 视图
         self.window.rootViewController = [self tabBarConfigure];
     }
     
@@ -95,7 +96,7 @@
 
 // MARK: - TabBarConfigure
 
-/// 配置TabBar标签栏视图
+/// 配置 TabBar 标签栏视图
 - (UITabBarController *)tabBarConfigure {
     UITabBarController *rootTabBarController = [UITabBarController new];
 
@@ -115,7 +116,7 @@
     MRTomatoClockViewController *tomatoClockViewController = [MRTomatoClockViewController new];
     tomatoClockViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"番茄钟" image:[UIImage systemImageNamed:@"timer"] tag:4];
     
-    // 添加到TabBar
+    // 添加到 TabBar
     rootTabBarController.viewControllers = @[calendarViewController, todoViewController, statisticViewController, tomatoClockViewController];
     
     return rootTabBarController;
