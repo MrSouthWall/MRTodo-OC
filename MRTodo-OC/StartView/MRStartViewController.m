@@ -6,6 +6,8 @@
 //
 
 #import "MRStartViewController.h"
+#import "../SceneDelegate.h"
+#import "SubView/MRStartSinglePreviewView.h"
 
 @interface MRStartViewController ()<UIScrollViewDelegate>
 
@@ -13,12 +15,15 @@
 @property (strong, nonatomic) UIPageControl *pageControl;
 
 @property (strong, nonatomic) UIView *logoPreviewView;
+@property (strong, nonatomic) UIImageView *logoImage;
+
 @property (strong, nonatomic) UIView *calendarPreviewView;
 @property (strong, nonatomic) UIView *todoPreviewView;
 @property (strong, nonatomic) UIView *statisticPreviewView;
 @property (strong, nonatomic) UIView *tomatoClockPreviewView;
 
 @property (strong, nonatomic) UIButton *nextButton;
+@property (nonatomic) NSInteger currentPageNumber;
 
 @end
 
@@ -28,65 +33,37 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.currentPageNumber = 0;
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     // 滚动视图
-    self.previewScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height - 200)];
-    self.previewScrollView.contentSize = CGSizeMake(UIScreen.mainScreen.bounds.size.width * 5, UIScreen.mainScreen.bounds.size.height - 200);
+    self.previewScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height - 225)];
+    self.previewScrollView.contentSize = CGSizeMake(UIScreen.mainScreen.bounds.size.width * 5, UIScreen.mainScreen.bounds.size.height - 225);
     self.previewScrollView.pagingEnabled = YES; // 设置滚动视图翻页模式
     self.previewScrollView.showsHorizontalScrollIndicator = NO; // 设置水平滚动条不可见
     self.previewScrollView.delegate = self;
     
     
     // Logo 预览图
-    self.logoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(UIScreen.mainScreen.bounds.size.width * 0, 0, self.previewScrollView.frame.size.width, self.previewScrollView.frame.size.height)];
-    UIImageView *logoImage = [UIImageView new];
-    logoImage.image = [UIImage imageNamed:@"MRTodo App Logo V1 - Light - Round"];
-    logoImage.contentMode = UIViewContentModeScaleAspectFit;
-    logoImage.layer.shadowColor = UIColor.labelColor.CGColor;
-    logoImage.layer.shadowOffset = CGSizeMake(0, 2);
-    logoImage.layer.shadowOpacity = 0.25;
-    logoImage.layer.shadowRadius = 10;
-//    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, 150, 150) cornerRadius:35];
-//    logoImage.layer.shadowPath = shadowPath.CGPath;
-    logoImage.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.logoPreviewView addSubview:logoImage];
+    self.logoPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"MRTodo App Logo V1 - 1024x1024 - Light - RoundShadow" withTitle:@"欢迎使用“MRTodo”" withText:nil withCurrentPageNumber:0 withType:MRStartSinglePreviewViewStyleAppIcon];
     [self.previewScrollView addSubview:self.logoPreviewView];
-    [NSLayoutConstraint activateConstraints:@[
-        [logoImage.centerXAnchor constraintEqualToAnchor:self.logoPreviewView.centerXAnchor],
-        [logoImage.topAnchor constraintEqualToAnchor:self.logoPreviewView.safeAreaLayoutGuide.topAnchor constant:100],
-        [logoImage.widthAnchor constraintEqualToConstant:150],
-        [logoImage.heightAnchor constraintEqualToConstant:150],
-    ]];
-
     
     // 日历预览图片视图
-    self.calendarPreviewView = [[UIView alloc] initWithFrame:CGRectMake(UIScreen.mainScreen.bounds.size.width * 1, 0, self.previewScrollView.frame.size.width, self.previewScrollView.frame.size.height)];
-    UIImageView *calendarPreviewImage = [UIImageView new];
-    calendarPreviewImage.image = [UIImage imageNamed:@"CalendarPreview"];
-    calendarPreviewImage.contentMode = UIViewContentModeScaleAspectFit;
-    calendarPreviewImage.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.calendarPreviewView addSubview:calendarPreviewImage];
+    self.calendarPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"CalendarPreview" withTitle:@"日历日程" withText:@"管理并查看你的日程安排和重要事件。" withCurrentPageNumber:1 withType:MRStartSinglePreviewViewStyleDefault];
     [self.previewScrollView addSubview:self.calendarPreviewView];
-    [NSLayoutConstraint activateConstraints:@[
-        [calendarPreviewImage.centerXAnchor constraintEqualToAnchor:self.calendarPreviewView.centerXAnchor],
-        [calendarPreviewImage.topAnchor constraintEqualToAnchor:self.calendarPreviewView.safeAreaLayoutGuide.topAnchor constant:50],
-    ]];
-    
     
     // 待办预览图片视图
-    self.todoPreviewView = [[UIView alloc] initWithFrame:CGRectMake(UIScreen.mainScreen.bounds.size.width * 2, 0, self.previewScrollView.frame.size.width, self.previewScrollView.frame.size.height)];
-    UIImageView *todoPreviewImage = [UIImageView new];
-    todoPreviewImage.image = [UIImage imageNamed:@"TodoPreview"];
-    todoPreviewImage.contentMode = UIViewContentModeScaleAspectFit;
-    todoPreviewImage.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.todoPreviewView addSubview:todoPreviewImage];
+    self.todoPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"TodoPreview" withTitle:@"待办事项" withText:@"创建、追踪和完成你的任务清单。" withCurrentPageNumber:2 withType:MRStartSinglePreviewViewStyleDefault];
     [self.previewScrollView addSubview:self.todoPreviewView];
-    [NSLayoutConstraint activateConstraints:@[
-        [todoPreviewImage.centerXAnchor constraintEqualToAnchor:self.todoPreviewView.centerXAnchor],
-        [todoPreviewImage.topAnchor constraintEqualToAnchor:self.todoPreviewView.safeAreaLayoutGuide.topAnchor constant:50],
-    ]];
+    
+    // 统计预览图片视图
+    self.statisticPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"StatisticPreview" withTitle:@"统计趋势" withText:@"分析和展示你的任务和时间管理趋势。" withCurrentPageNumber:3 withType:MRStartSinglePreviewViewStyleDefault];
+    [self.previewScrollView addSubview:self.statisticPreviewView];
 
+    // 番茄钟预览图片视图
+    self.tomatoClockPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"TomatoClockPreview" withTitle:@"番茄钟" withText:@"利用番茄工作法提高工作效率并专注于任务。" withCurrentPageNumber:4 withType:MRStartSinglePreviewViewStyleDefault];
+    [self.previewScrollView addSubview:self.tomatoClockPreviewView];
+    
     
     // 将预览滚动视图添加到整个启动页视图中
     [self.view addSubview:self.previewScrollView];
@@ -95,12 +72,12 @@
     // 下一个按钮
     self.nextButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.nextButton setFrame:CGRectMake((self.view.bounds.size.width / 2) - 100, (self.view.bounds.size.height / 2) - 50, 200, 50)];
-    [self.nextButton setTitle:@"完成" forState:UIControlStateNormal];
+    [self updateButtonText];
     [self.nextButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     [self.nextButton setBackgroundColor:UIColor.tintColor];
     self.nextButton.layer.cornerRadius = 10;
     self.nextButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.nextButton addTarget:self action:@selector(turnOffStartupView) forControlEvents:UIControlEventTouchUpInside];
+    [self.nextButton addTarget:self action:@selector(nextPreivewPage) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.nextButton];
     [NSLayoutConstraint activateConstraints:@[
         [self.nextButton.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
@@ -120,10 +97,10 @@
     [self.pageControl addTarget:self action:@selector(pageControlValueChanged:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:self.pageControl];
     [NSLayoutConstraint activateConstraints:@[
-        [self.pageControl.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:40],
-        [self.pageControl.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-40],
-        [self.pageControl.bottomAnchor constraintEqualToAnchor:self.nextButton.topAnchor constant:-40],
-        [self.pageControl.heightAnchor constraintEqualToConstant:45],
+        [self.pageControl.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:50],
+        [self.pageControl.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-50],
+        [self.pageControl.bottomAnchor constraintEqualToAnchor:self.nextButton.topAnchor constant:-50],
+        [self.pageControl.heightAnchor constraintEqualToConstant:50],
     ]];
 
     
@@ -137,21 +114,51 @@
     // 设定页面指示器当前页面的值
     NSInteger currentPage = (NSInteger)(scrollView.contentOffset.x / self.previewScrollView.frame.size.width);
     self.pageControl.currentPage = currentPage;
+    self.currentPageNumber = currentPage;
+    [self updateButtonText];
 }
 
 
-// MARK: - Button
+// MARK: - Custom
 
 /// 关闭启动页
-- (void)turnOffStartupView {
-    NSLog(@"已按下完成按钮！");
+- (void)nextPreivewPage {
+    if (self.currentPageNumber < 4) {
+        [self updateButtonText]; // 更新按钮文字
+        self.currentPageNumber++; // 计数
+        // 翻页
+        CGFloat pageWidth = self.previewScrollView.frame.size.width;
+        CGPoint offset = CGPointMake(self.currentPageNumber * pageWidth, 0);
+        [self.previewScrollView setContentOffset:offset animated:YES];
+    } else {
+        // 修改 UserDefaults，下次启动时不会再出现启动页
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        [userDefaults setBool:YES forKey:@"isNotFirstLaunch"];
+        // 获取当前的 SceneDelegate
+        SceneDelegate *sceneDelegate = (SceneDelegate *)[UIApplication sharedApplication].connectedScenes.allObjects.firstObject.delegate;
+        // 切换视图到 TabBar
+        sceneDelegate.window.rootViewController = [sceneDelegate tabBarConfigure];
+        // 配置切换动画
+        [UIView transitionWithView:sceneDelegate.window duration:1.0 options:UIViewAnimationOptionTransitionFlipFromRight animations:nil completion:nil];
+    }
 }
 
 /// 页面指示器切换
 - (void)pageControlValueChanged:(UIPageControl *)sender {
+    [self updateButtonText]; // 更新按钮文字
+    self.currentPageNumber = sender.currentPage;
     CGFloat pageWidth = self.previewScrollView.frame.size.width;
     CGPoint offset = CGPointMake(sender.currentPage * pageWidth, 0);
     [self.previewScrollView setContentOffset:offset animated:YES];
+}
+
+/// 更新按钮文字
+- (void)updateButtonText {
+    if (self.currentPageNumber < 4) {
+        [self.nextButton setTitle:@"继续" forState:UIControlStateNormal];
+    } else {
+        [self.nextButton setTitle:@"完成" forState:UIControlStateNormal];
+    }
 }
 
 /*
