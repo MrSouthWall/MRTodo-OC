@@ -25,6 +25,8 @@
 @property (strong, nonatomic) UIButton *nextButton;
 @property (nonatomic) float currentPageNumber;
 
+@property (strong, nonatomic) UIView *previewView;
+
 @end
 
 @implementation MRStartViewController
@@ -33,44 +35,86 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    // 设置从第一页开始
     self.currentPageNumber = 0;
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     // 滚动视图
-    self.previewScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height - 225)];
-    self.previewScrollView.contentSize = CGSizeMake(UIScreen.mainScreen.bounds.size.width * 5, UIScreen.mainScreen.bounds.size.height - 225);
+    CGFloat previewScrollViewHeight = UIScreen.mainScreen.bounds.size.height - 225;
+    self.previewScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, previewScrollViewHeight)];
+    self.previewScrollView.contentSize = CGSizeMake(UIScreen.mainScreen.bounds.size.width * 5, previewScrollViewHeight);
     self.previewScrollView.pagingEnabled = YES; // 设置滚动视图翻页模式
     self.previewScrollView.showsHorizontalScrollIndicator = NO; // 设置水平滚动条不可见
     self.previewScrollView.delegate = self;
     
+    // 预览视图图片
+    NSArray *images = @[
+        @"MRTodo App Logo V1 - 1024x1024 - Light - RoundShadow",
+        @"CalendarPreview",
+        @"TodoPreview",
+        @"StatisticPreview",
+        @"TomatoClockPreview",
+    ];
+    // 预览视图标题
+    NSArray *titles = @[
+        @"欢迎使用“MRTodo”",
+        @"日历日程",
+        @"待办事项",
+        @"统计趋势",
+        @"番茄钟",
+    ];
+    // 预览视图文字
+    NSArray *texts = @[
+        @"",
+        @"管理并查看你的日程安排和重要事件。",
+        @"创建、追踪和完成你的任务清单。",
+        @"分析和展示你的任务和时间管理趋势。",
+        @"利用番茄工作法提高工作效率并专注于任务。",
+    ];
     
-    // Logo 预览图
-    self.logoPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"MRTodo App Logo V1 - 1024x1024 - Light - RoundShadow" withTitle:@"欢迎使用“MRTodo”" withText:nil withCurrentPageNumber:0 withType:MRStartSinglePreviewViewStyleAppIcon];
-    [self.previewScrollView addSubview:self.logoPreviewView];
-    
-    // 日历预览图片视图
-    self.calendarPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"CalendarPreview" withTitle:@"日历日程" withText:@"管理并查看你的日程安排和重要事件。" withCurrentPageNumber:1 withType:MRStartSinglePreviewViewStyleDefault];
-    [self.previewScrollView addSubview:self.calendarPreviewView];
-    
-    // 待办预览图片视图
-    self.todoPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"TodoPreview" withTitle:@"待办事项" withText:@"创建、追踪和完成你的任务清单。" withCurrentPageNumber:2 withType:MRStartSinglePreviewViewStyleDefault];
-    [self.previewScrollView addSubview:self.todoPreviewView];
-    
-    // 统计预览图片视图
-    self.statisticPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"StatisticPreview" withTitle:@"统计趋势" withText:@"分析和展示你的任务和时间管理趋势。" withCurrentPageNumber:3 withType:MRStartSinglePreviewViewStyleDefault];
-    [self.previewScrollView addSubview:self.statisticPreviewView];
-
-    // 番茄钟预览图片视图
-    self.tomatoClockPreviewView = [[MRStartSinglePreviewView alloc] initWithImage:@"TomatoClockPreview" withTitle:@"番茄钟" withText:@"利用番茄工作法提高工作效率并专注于任务。" withCurrentPageNumber:4 withType:MRStartSinglePreviewViewStyleDefault];
-    [self.previewScrollView addSubview:self.tomatoClockPreviewView];
-    
+    // 创建预览页面
+    for (int i = 0; i < 5; i++) {
+        if (i) { // 如果 i 为 0，则为假，执行 else 后面 AppIcon 样式的代码
+            self.previewView = [
+                [MRStartSinglePreviewView alloc]
+                initWithImage:images[i]
+                withTitle:titles[i]
+                withText:texts[i]
+                withCurrentPageNumber:i
+                withHeight:previewScrollViewHeight
+                withType:MRStartSinglePreviewViewStyleDefault
+            ];
+        } else {
+            self.previewView = [
+                [MRStartSinglePreviewView alloc]
+                initWithImage:images[i]
+                withTitle:titles[i]
+                withText:nil
+                withCurrentPageNumber:i
+                withHeight:previewScrollViewHeight
+                withType:MRStartSinglePreviewViewStyleAppIcon
+            ];
+        }
+        [self.previewScrollView addSubview:self.previewView]; // 添加到 ScrollView
+    }
     
     // 将预览滚动视图添加到整个启动页视图中
     [self.view addSubview:self.previewScrollView];
     
-    
-    // 下一个按钮
+    // 配置继续按钮
     self.nextButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [self buttonConfigure];
+    
+    // 配置页面指示器
+    self.pageControl = [UIPageControl new];
+    [self pageControlConfigure];
+}
+
+
+// MARK: - Configure
+
+/// 配置按钮属性
+- (void)buttonConfigure {
     [self.nextButton setFrame:CGRectMake((self.view.bounds.size.width / 2) - 100, (self.view.bounds.size.height / 2) - 50, 200, 50)];
     [self updateButtonText];
     [self.nextButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
@@ -86,9 +130,10 @@
         [self.nextButton.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-40],
         [self.nextButton.heightAnchor constraintEqualToConstant:45],
     ]];
-    
-    // 页面指示器
-    self.pageControl = [UIPageControl new];
+}
+
+/// 配置控制器属性
+- (void)pageControlConfigure {
     self.pageControl.numberOfPages = 5;
     self.pageControl.currentPage = 0;
     self.pageControl.translatesAutoresizingMaskIntoConstraints = NO;
@@ -102,8 +147,6 @@
         [self.pageControl.bottomAnchor constraintEqualToAnchor:self.nextButton.topAnchor constant:-50],
         [self.pageControl.heightAnchor constraintEqualToConstant:50],
     ]];
-
-    
 }
 
 

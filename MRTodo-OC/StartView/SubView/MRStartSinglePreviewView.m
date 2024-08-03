@@ -13,7 +13,7 @@
 
 @implementation MRStartSinglePreviewView
 
-- (instancetype)initWithImage:(NSString *)imageName withTitle:(NSString *)title withText:(nullable NSString *)text withCurrentPageNumber:(NSInteger)currentPageNumber withType:(MRStartSinglePreviewViewStyle)style {
+- (instancetype)initWithImage:(NSString *)imageName withTitle:(NSString *)title withText:(nullable NSString *)text withCurrentPageNumber:(NSInteger)currentPageNumber withHeight:(CGFloat)previewScrollViewHeight withType:(MRStartSinglePreviewViewStyle)style {
     self = [super init];
     if (self) {
         self.previewImage = [[UIImageView alloc] init];
@@ -23,6 +23,7 @@
         self.previewText = [[UILabel alloc] init];
         self.previewText.text = text;
         self.currentPageNumber = currentPageNumber;
+        self.previewScrollViewHeight = previewScrollViewHeight;
         self.previewStyle = style;
         [self viewConfigure];
     }
@@ -32,7 +33,7 @@
 /// 视图配置
 - (void)viewConfigure {
     // 设置视图框架
-    self.frame = CGRectMake(UIScreen.mainScreen.bounds.size.width * self.currentPageNumber, 0, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height - 225);
+    self.frame = CGRectMake(UIScreen.mainScreen.bounds.size.width * self.currentPageNumber, 0, UIScreen.mainScreen.bounds.size.width, self.previewScrollViewHeight);
     switch (self.previewStyle) {
         case MRStartSinglePreviewViewStyleDefault:
             [self startSinglePreviewViewStyleDefault];

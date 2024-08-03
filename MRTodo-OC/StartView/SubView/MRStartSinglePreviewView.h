@@ -23,7 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger currentPageNumber;
 @property (nonatomic) MRStartSinglePreviewViewStyle previewStyle;
 
-- (instancetype)initWithImage:(NSString *)imageName withTitle:(NSString *)title withText:(nullable NSString *)text withCurrentPageNumber:(NSInteger)currentPageNumber withType:(MRStartSinglePreviewViewStyle)style;
+@property (nonatomic) CGFloat previewScrollViewHeight;
+
+- (instancetype)initWithImage:(NSString *)imageName withTitle:(NSString *)title withText:(nullable NSString *)text withCurrentPageNumber:(NSInteger)currentPageNumber withHeight:(CGFloat)previewScrollViewHeight withType:(MRStartSinglePreviewViewStyle)style;
 
 @end
 

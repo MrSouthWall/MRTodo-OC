@@ -16,7 +16,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    // 加载视图完成后执行的代码。
 }
 
 

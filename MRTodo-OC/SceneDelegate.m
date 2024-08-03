@@ -31,12 +31,9 @@
     
     // NSUserDefaults 是单例模式，此处创建一个对象方便使用
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setBool:NO forKey:@"isNotFirstLaunch"];
 
     // 首次启动则打开启动页，当 isNotFirstLaunch 值为 NO 时是首次启动
     if (![userDefaults boolForKey:@"isNotFirstLaunch"]) {
-        // 设置值为 YES，则不是第一次启动，就会跳转到 TabBar 视图
-        [userDefaults setBool:NO forKey:@"isNotFirstLaunch"];
         // 配置 window 根视图为启动页视图
         self.window.rootViewController = [self startViewConfigure];
     } else {
@@ -85,7 +82,7 @@
 }
 
 
-// MARK: - TabBarConfigure
+// MARK: - StartViewConfigure
 
 /// 配置启动页视图
 - (MRStartViewController *)startViewConfigure {
