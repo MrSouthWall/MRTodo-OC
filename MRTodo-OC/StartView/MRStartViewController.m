@@ -23,7 +23,7 @@
 @property (strong, nonatomic) UIView *tomatoClockPreviewView;
 
 @property (strong, nonatomic) UIButton *nextButton;
-@property (nonatomic) NSInteger currentPageNumber;
+@property (nonatomic) float currentPageNumber;
 
 @end
 
@@ -112,8 +112,8 @@
 /// 页面滚动时执行
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     // 设定页面指示器当前页面的值
-    NSInteger currentPage = (NSInteger)(scrollView.contentOffset.x / self.previewScrollView.frame.size.width);
-    self.pageControl.currentPage = currentPage;
+    float currentPage = scrollView.contentOffset.x / self.previewScrollView.frame.size.width;
+    self.pageControl.currentPage = (NSInteger)(currentPage);
     self.currentPageNumber = currentPage;
     [self updateButtonText];
 }
@@ -124,7 +124,6 @@
 /// 关闭启动页
 - (void)nextPreivewPage {
     if (self.currentPageNumber < 4) {
-        [self updateButtonText]; // 更新按钮文字
         self.currentPageNumber++; // 计数
         // 翻页
         CGFloat pageWidth = self.previewScrollView.frame.size.width;
@@ -145,7 +144,6 @@
 
 /// 页面指示器切换
 - (void)pageControlValueChanged:(UIPageControl *)sender {
-    [self updateButtonText]; // 更新按钮文字
     self.currentPageNumber = sender.currentPage;
     CGFloat pageWidth = self.previewScrollView.frame.size.width;
     CGPoint offset = CGPointMake(sender.currentPage * pageWidth, 0);
@@ -154,7 +152,8 @@
 
 /// 更新按钮文字
 - (void)updateButtonText {
-    if (self.currentPageNumber < 4) {
+    // 设定为 3.001 是防止按钮文字二次闪烁，在用户拖动预览视图时，立刻对按钮文字进行更改
+    if (self.currentPageNumber < 3.001) {
         [self.nextButton setTitle:@"继续" forState:UIControlStateNormal];
     } else {
         [self.nextButton setTitle:@"完成" forState:UIControlStateNormal];
