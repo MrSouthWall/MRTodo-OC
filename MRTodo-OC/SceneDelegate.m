@@ -7,11 +7,12 @@
 
 #import "SceneDelegate.h"
 #import "AppDelegate.h"
-#import "CalendarView/MRCalendarViewController.h"
-#import "TodoView/MRTodoViewController.h"
-#import "StatisticView/MRStatisticViewController.h"
-#import "TomatoClockView/MRTomatoClockViewController.h"
-#import "StartView/MRStartViewController.h"
+#import "View/CalendarView/MRCalendarViewController.h"
+#import "View/TodoView/MRTodoViewController.h"
+#import "View/StatisticView/MRStatisticViewController.h"
+#import "View/TomatoClockView/MRTomatoClockViewController.h"
+#import "View/StartView/MRStartViewController.h"
+#import "CoreDataManager.h"
 
 @interface SceneDelegate ()
 
@@ -26,7 +27,7 @@
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
     
     // SceneDelegate 有一个 window 属性，我们需要给这个 window 属性赋值一个 UIWindow 对象，这个对象的 frame 设定为屏幕的大小；
-    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.windowScene = (UIWindowScene*)scene;
     
     // NSUserDefaults 是单例模式，此处创建一个对象方便使用
@@ -78,7 +79,12 @@
     // to restore the scene back to its current state.
 
     // Save changes in the application's managed object context when the application transitions to the background.
-    [(AppDelegate *)UIApplication.sharedApplication.delegate saveContext];
+    
+    /* 原先 Xcode 默认把 CoreData 相关代码写在 AppDelegate 内，现已经把 CoreData 独立出来，所以弃用
+     [(AppDelegate *)UIApplication.sharedApplication.delegate saveContext];
+     */
+    
+    [[CoreDataManager sharedManager] saveContext]; // App 切换到后台时保存 CoreData 数据
 }
 
 
@@ -103,6 +109,7 @@
     
     // 待办视图
     MRTodoViewController *todoViewController = [MRTodoViewController new];
+    UINavigationController *todoNavigationController = [[UINavigationController alloc] initWithRootViewController:todoViewController];
     todoViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"待办" image:[UIImage systemImageNamed:@"text.badge.checkmark"] tag:2];
     
     // 统计视图
@@ -114,7 +121,7 @@
     tomatoClockViewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"番茄钟" image:[UIImage systemImageNamed:@"timer"] tag:4];
     
     // 添加到 TabBar
-    rootTabBarController.viewControllers = @[calendarViewController, todoViewController, statisticViewController, tomatoClockViewController];
+    rootTabBarController.viewControllers = @[calendarViewController, todoNavigationController, statisticViewController, tomatoClockViewController];
     
     return rootTabBarController;
 }

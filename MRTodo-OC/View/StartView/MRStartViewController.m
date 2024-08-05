@@ -6,7 +6,7 @@
 //
 
 #import "MRStartViewController.h"
-#import "../SceneDelegate.h"
+#import "../../SceneDelegate.h"
 #import "SubView/MRStartSinglePreviewView.h"
 
 @interface MRStartViewController ()<UIScrollViewDelegate>
