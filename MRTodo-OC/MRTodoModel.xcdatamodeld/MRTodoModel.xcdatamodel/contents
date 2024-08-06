@@ -20,6 +20,7 @@
         <attribute name="repeatNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="URI"/>
         <attribute name="weather" optional="YES" attributeType="String"/>
         <relationship name="folder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Folder" inverseName="todos" inverseEntity="Folder"/>
         <relationship name="parentTodo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Todo" inverseName="subTodos" inverseEntity="Todo"/>

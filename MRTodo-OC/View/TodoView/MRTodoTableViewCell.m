@@ -21,13 +21,13 @@
     return self;
 }
 
+/// 配置 Cell
 - (void)configureCell {
     self.contentView.backgroundColor = UIColor.systemTealColor;
     self.contentView.layer.borderColor = UIColor.systemGray6Color.CGColor;
     self.contentView.layer.borderWidth = 1.0;
     self.contentView.layer.cornerRadius = 20;
     self.contentView.layer.masksToBounds = YES;
-    
     
     // 检查勾选按钮
     self.checkButton = [[UIButton alloc] init];
@@ -39,6 +39,8 @@
         [self.checkButton.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:20],
         [self.checkButton.widthAnchor constraintEqualToConstant:60],
         [self.checkButton.heightAnchor constraintEqualToConstant:60],
+//        [self.checkButton.imageView.widthAnchor constraintEqualToConstant:50],
+//        [self.checkButton.imageView.heightAnchor constraintEqualToConstant:50],
     ]];
 
     // Todo 标题
@@ -54,19 +56,13 @@
     ]];
 }
 
-//-(void)setFrame:(CGRect)frame
-//{
-//    frame.origin.x = 5;//这里间距为10，可以根据自己的情况调整
-//    frame.size.width -= 2 * frame.origin.x;
-//    frame.size.height -= 2 * frame.origin.x;
-//    [super setFrame:frame];
-//}
 
 // MARK: - Button
 
 - (void)checkTodo {
     NSLog(@"CheckTodo!");
 }
+
 
 // MARK: - System Presets
 

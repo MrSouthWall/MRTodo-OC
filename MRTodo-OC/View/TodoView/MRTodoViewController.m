@@ -8,11 +8,13 @@
 #import "MRTodoViewController.h"
 //#import "MRTodoTableViewCell.h"
 #import "MRTodoCollectionViewCell.h"
+#import "MRAddTodoViewController.h"
 
 @interface MRTodoViewController ()<UICollectionViewDataSource, UICollectionViewDelegate>
-//@interface MRTodoViewController ()<UITableViewDataSource, UITableViewDelegate>
 
 /* TableView 代码
+ @interface MRTodoViewController ()<UITableViewDataSource, UITableViewDelegate>
+
  @property (nonatomic, strong) UITableView *todoTableView;
  */
 
@@ -30,12 +32,12 @@
     self.title = @"待办事项";
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     // 设置导航栏右上角按钮
-    UIBarButtonItem *addTodoButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"plus"] style:UIBarButtonItemStylePlain target:self action:@selector(addTodoItem)];
+    UIBarButtonItem *addTodoButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"plus"] style:UIBarButtonItemStylePlain target:self action:@selector(presentAddTodoViewController)];
     self.navigationItem.rightBarButtonItem = addTodoButton;
     // 设置 Collection 视图布局
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.minimumLineSpacing = 10;
-    flowLayout.itemSize = CGSizeMake(self.view.frame.size.width - 40, 65);
+    flowLayout.itemSize = CGSizeMake(self.view.frame.size.width - 40, 60);
     // 设置 COllection 视图
     self.todoCollectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:flowLayout];
     self.todoCollectionView.dataSource = self;
@@ -80,7 +82,7 @@
     cell.layer.masksToBounds = YES;
     cell.layer.borderWidth = 1;
     cell.layer.borderColor = UIColor.grayColor.CGColor;
-    [cell.checkButton setImage:[UIImage systemImageNamed:@"star"] forState:UIControlStateNormal];
+    [cell.checkButton setImage:[UIImage systemImageNamed:@"circle"] forState:UIControlStateNormal];
     cell.todoTitle.text = [NSString stringWithFormat:@"Item %ld", (long)indexPath.item];
     return cell;
 }
@@ -127,6 +129,13 @@
 /// 点击右上角按钮添加待办事项
 - (void)addTodoItem {
     NSLog(@"用户点击了新增Todo按钮！");
+}
+
+/// 打开 AddTodo 页面
+- (void)presentAddTodoViewController {
+    MRAddTodoViewController * addTodoViewController = [[MRAddTodoViewController alloc] init];
+    UINavigationController *addTodoNavigationController = [[UINavigationController alloc] initWithRootViewController:addTodoViewController];
+    [self presentViewController:addTodoNavigationController animated:YES completion:nil];
 }
 
 
