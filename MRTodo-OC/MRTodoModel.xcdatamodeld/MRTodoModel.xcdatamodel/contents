@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23211.1" systemVersion="24A5298h" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
-    <entity name="Folder" representedClassName="Folder" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23211.1" systemVersion="24A5309e" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="Folder" representedClassName="Folder" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="todos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Todo" inverseName="folder" inverseEntity="Todo"/>
     </entity>
-    <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
+    <entity name="Tag" representedClassName="Tag" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="todos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Todo" inverseName="tags" inverseEntity="Todo"/>
     </entity>
-    <entity name="Todo" representedClassName="Todo" syncable="YES" codeGenerationType="class">
+    <entity name="Todo" representedClassName="Todo" syncable="YES">
+        <attribute name="createTime" optional="YES" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="flag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
@@ -28,7 +29,7 @@
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="todos" inverseEntity="Tag"/>
         <relationship name="tomatoClocks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TomatoClock" inverseName="todo" inverseEntity="TomatoClock"/>
     </entity>
-    <entity name="TomatoClock" representedClassName="TomatoClock" syncable="YES" codeGenerationType="class">
+    <entity name="TomatoClock" representedClassName="TomatoClock" syncable="YES">
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="pauseTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

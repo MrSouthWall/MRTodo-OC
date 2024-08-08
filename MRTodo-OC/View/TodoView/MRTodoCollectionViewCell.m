@@ -25,7 +25,7 @@
 - (void)configureCell {
     // 检查勾选按钮
     self.checkButton = [[UIButton alloc] init];
-    self.checkButton.backgroundColor = UIColor.systemTealColor;
+//    self.checkButton.backgroundColor = UIColor.systemTealColor;
     self.checkButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.checkButton];
     [NSLayoutConstraint activateConstraints:@[
@@ -37,7 +37,7 @@
 
     // Todo 标题
     self.todoTitle = [[UILabel alloc] init];
-    self.todoTitle.backgroundColor = UIColor.systemPinkColor;
+//    self.todoTitle.backgroundColor = UIColor.systemPinkColor;
     self.todoTitle.translatesAutoresizingMaskIntoConstraints = NO;
     self.todoTitle.textColor = UIColor.labelColor;
     [self.contentView addSubview:self.todoTitle];

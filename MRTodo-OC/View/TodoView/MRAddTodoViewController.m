@@ -6,8 +6,10 @@
 //
 
 #import "MRAddTodoViewController.h"
+#import "../../CoreDataManager.h"
+#import "../../../Model//Todo+CoreDataClass.h"
 
-@interface MRAddTodoViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface MRAddTodoViewController ()<UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *addTodoTableView;
 @property (nonatomic, strong) UITextField *todoTitle;
@@ -47,13 +49,11 @@
     
     // 配置标题
     self.todoTitle = [[UITextField alloc] init];
-    self.todoTitle.placeholder = @"新的待办事项";
-//    self.todoTitle.delegate = self;
+    self.todoTitle.placeholder = @"待办事项";
     
     // 配置备注
     self.note = [[UITextField alloc] init];
     self.note.placeholder = @"备注";
-//    self.note.delegate = self;
 }
 
 
@@ -61,7 +61,7 @@
 
 /// 章节数量
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 8;
+    return 5;
 }
 
 /// 配置行数
@@ -73,20 +73,6 @@
     }
     return 1;
 }
-
-/// 章节标题
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-//    switch (section) {
-//        case 0:
-//            return @"标题";
-//        case 1:
-//            return @"备注";
-//        case 2:
-//            return @"开始时间";
-//        default:
-//            return @"";
-//    }
-//}
 
 /// addTodoTableView 的 Cell
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -100,7 +86,7 @@
                 case 0:
                     [cell.contentView addSubview:self.todoTitle];
                     self.todoTitle.frame = cell.contentView.bounds;
-                    self.note.translatesAutoresizingMaskIntoConstraints = NO;
+                    self.todoTitle.translatesAutoresizingMaskIntoConstraints = NO;
                     [NSLayoutConstraint activateConstraints:@[
                         [self.todoTitle.centerYAnchor constraintEqualToAnchor:cell.contentView.centerYAnchor],
                         [self.todoTitle.leadingAnchor constraintEqualToAnchor:cell.contentView.leadingAnchor constant:20],
@@ -123,7 +109,6 @@
             }
             break;
         case 1:
-
             break;
         case 2:
             break;
@@ -141,14 +126,43 @@
     return 50;
 }
 
+/// 配置 Section 章节标题高度
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (section) {
+        return 0; // 列表其他部分无间隔
+    }
+    return 10; // 列表顶部空间隔 10
+}
 
-// MARK: - UITextFieldDelegate
+/// 配置 Section 章节标题视图
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    return nil; // 返回nil以隐藏头部视图
+}
 
 
 // MARK: - Button
 
 /// 完成按钮
 - (void)doneButton {
+    // CoreData
+    NSManagedObjectContext *context = [CoreDataManager sharedManager].persistentContainer.viewContext;
+    // 创建一个来自 CoreData 的 Todo 实体在 context 中
+    Todo *newTodo = (Todo *)[NSEntityDescription insertNewObjectForEntityForName:@"Todo" inManagedObjectContext:context];
+    // 给 Todo 赋值
+    newTodo.title = @"新TodoTitle";
+    newTodo.note = @"新Note";
+    newTodo.isCompleted = YES;
+    newTodo.createTime = [NSDate now];
+    // 有可能出错，所以需要设置 error
+    NSError *error = nil;
+    // 保存数据的同时，检查有没有返回错误
+    if (![context save:&error]) {
+        NSLog(@"Todo 数据保存失败：%@", error); // 输出错误信息
+    } else {
+        NSLog(@"Todo 数据保存成功：%@", newTodo); // 输出保存成功信息
+    }
+    
+    // 关闭新建 Todo 视图
     [self dismissViewController];
 }
 

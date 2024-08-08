@@ -18,14 +18,6 @@
     return sharedManager;
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self persistentContainer]; // Initialize the Core Data stack
-    }
-    return self;
-}
-
 
 #pragma mark - Core Data stack
 

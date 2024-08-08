@@ -30,6 +30,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BF4E02082C64E50D00A0DDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Folder+CoreDataClass.m",
+				"Folder+CoreDataProperties.m",
+				"Tag+CoreDataClass.m",
+				"Tag+CoreDataProperties.m",
+				"Todo+CoreDataClass.m",
+				"Todo+CoreDataProperties.m",
+				"TomatoClock+CoreDataClass.m",
+				"TomatoClock+CoreDataProperties.m",
+			);
+			target = BFE889FF2C526EA100803443 /* MRTodo-OC */;
+		};
 		BFE88A302C526EA300803443 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -53,6 +67,7 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		BF4E02072C64E50C00A0DDE1 /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BF4E02082C64E50D00A0DDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
 		BFE88A022C526EA100803443 /* MRTodo-OC */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BFE88A302C526EA300803443 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, BFE88A342C526EA300803443 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "MRTodo-OC"; sourceTree = "<group>"; };
 		BFE88A212C526EA300803443 /* MRTodo-OCTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "MRTodo-OCTests"; sourceTree = "<group>"; };
 		BFE88A2B2C526EA300803443 /* MRTodo-OCUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "MRTodo-OCUITests"; sourceTree = "<group>"; };
@@ -86,6 +101,7 @@
 		BFE889F72C526EA100803443 = {
 			isa = PBXGroup;
 			children = (
+				BF4E02072C64E50C00A0DDE1 /* Model */,
 				BFE88A022C526EA100803443 /* MRTodo-OC */,
 				BFE88A212C526EA300803443 /* MRTodo-OCTests */,
 				BFE88A2B2C526EA300803443 /* MRTodo-OCUITests */,

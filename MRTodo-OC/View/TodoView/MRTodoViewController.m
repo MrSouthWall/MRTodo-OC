@@ -9,14 +9,13 @@
 //#import "MRTodoTableViewCell.h"
 #import "MRTodoCollectionViewCell.h"
 #import "MRAddTodoViewController.h"
+#import "../../CoreDataManager.h"
+#import "../../../Model//Todo+CoreDataClass.h"
 
 @interface MRTodoViewController ()<UICollectionViewDataSource, UICollectionViewDelegate>
 
-/* TableView 代码
- @interface MRTodoViewController ()<UITableViewDataSource, UITableViewDelegate>
-
- @property (nonatomic, strong) UITableView *todoTableView;
- */
+// CoreData
+@property (nonatomic, strong) NSArray<Todo *> *todoArray;
 
 @property (nonatomic, strong) UICollectionView *todoCollectionView;
 
@@ -28,12 +27,39 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    // 从 CoreData 获取 Todo 条目信息
+    NSManagedObjectContext *context = [CoreDataManager sharedManager].persistentContainer.viewContext;
+    // 创建一个获取请求，fetchRequest 是 Xcode 在 Todo 类中预设好的获取请求方法
+    NSFetchRequest *todoFetchRequest = [Todo fetchRequest];
+    // 创建一个排序描述，根据 createTime 排序，ascending 的值为 YES 则按升序排序
+    NSSortDescriptor *createTimeSort = [[NSSortDescriptor alloc] initWithKey:@"createTime" ascending:YES];
+    // 把排序描述赋予这个获取的请求，换言之就是，以创建时间升序的顺序获取 CoreData 内 Todo 的条目数据
+    todoFetchRequest.sortDescriptors = @[createTimeSort];
+    NSError *error = nil; // 由于这个过程可能会抛出错误，所以需要一个 error
+    // 执行从 context 中获取关于 Todo 条目，赋值给 todoArry，executeFetchRequest 意为执行获取请求
+    self.todoArray = [context executeFetchRequest:todoFetchRequest error:&error];
+    // 检查是否报错
+    if (error) {
+        [NSException raise:@"Fetch Error" format:@"%@", error.localizedDescription];
+    }
+    // 在控制台打印 todoArray 中所有条目
+    for (Todo *todo in self.todoArray) {
+        NSLog(@"Title: %@", todo.title);
+        NSLog(@"Is Completed: %@", todo.isCompleted ? @"YES" : @"NO");
+        NSLog(@"Due Date: %@", todo.createTime);
+        NSLog(@"");
+    }
+    NSLog(@"--- Core Data Done ---");
+    
     // 设置导航栏标题
     self.title = @"待办事项";
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     // 设置导航栏右上角按钮
     UIBarButtonItem *addTodoButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"plus"] style:UIBarButtonItemStylePlain target:self action:@selector(presentAddTodoViewController)];
     self.navigationItem.rightBarButtonItem = addTodoButton;
+    // 设置导航栏左上角刷新按钮
+    UIBarButtonItem *reloadTodoButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"arrow.triangle.2.circlepath"] style:UIBarButtonItemStylePlain target:self action:@selector(reloadView)];
+    self.navigationItem.leftBarButtonItem = reloadTodoButton;
     // 设置 Collection 视图布局
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.minimumLineSpacing = 10;
@@ -44,27 +70,6 @@
     self.todoCollectionView.delegate = self;
     [self.todoCollectionView registerClass:[MRTodoCollectionViewCell class] forCellWithReuseIdentifier:@"UICollectionViewCell"];
     [self.view addSubview:self.todoCollectionView];
-    
-    /* UITableView 代码
-     // 添加右侧按钮
-     UIBarButtonItem *addTodoButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"plus"] style:UIBarButtonItemStylePlain target:self action:@selector(addTodoItem)];
-     self.navigationItem.rightBarButtonItem = addTodoButton;
-     
-     self.todoTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
-     self.todoTableView.delegate = self;
-     self.todoTableView.dataSource = self;
-     self.todoTableView.separatorStyle = UITableViewCellSeparatorStyleNone; // 去掉分隔线
-     [self.todoTableView registerClass:[MRTodoTableViewCell class] forCellReuseIdentifier:@"MRTodoTableViewCell"];
-     self.todoTableView.translatesAutoresizingMaskIntoConstraints = NO;
-     [self.view addSubview:self.todoTableView];
-     [NSLayoutConstraint activateConstraints:@[
-         [self.todoTableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:20],
-         [self.todoTableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-20],
-         [self.todoTableView.heightAnchor constraintEqualToAnchor:self.view.heightAnchor],
-     ]];
-     
-     NSLog(@"Navigation Controller: %@", self.navigationController);
-     */
 }
 
 
@@ -72,7 +77,7 @@
 
 /// 行数
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return 30;
+    return self.todoArray.count;
 }
 
 /// 设置 Cell
@@ -81,9 +86,17 @@
     cell.layer.cornerRadius = 20;
     cell.layer.masksToBounds = YES;
     cell.layer.borderWidth = 1;
-    cell.layer.borderColor = UIColor.grayColor.CGColor;
-    [cell.checkButton setImage:[UIImage systemImageNamed:@"circle"] forState:UIControlStateNormal];
-    cell.todoTitle.text = [NSString stringWithFormat:@"Item %ld", (long)indexPath.item];
+    cell.layer.borderColor = UIColor.systemGray3Color.CGColor;
+    
+    // 从 todoArray 获取每一个条目的数据
+    Todo *todo = self.todoArray[indexPath.item];
+    cell.todoTitle.text = [NSString stringWithFormat:@"%@", todo.title];
+    // 设置 check 图标
+    if (todo.isCompleted) {
+        [cell.checkButton setImage:[UIImage systemImageNamed:@"checkmark.circle"] forState:UIControlStateNormal];
+    } else {
+        [cell.checkButton setImage:[UIImage systemImageNamed:@"circle"] forState:UIControlStateNormal];
+    }
     return cell;
 }
 
@@ -138,57 +151,10 @@
     [self presentViewController:addTodoNavigationController animated:YES completion:nil];
 }
 
-
-/* UITableView 代码
- // MARK: - UITableViewDataSource
-
- /// 行数
- - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-     return 30;
- }
-
- /// 设置 Cell
- - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-     // 使用 dequeueReusableCellWithIdentifier 进行初始化，有助于提高性能和减少内存使用
-     MRTodoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MRTodoTableViewCell" forIndexPath:indexPath];
-     if (!cell) {
-         cell = [[MRTodoTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MRTodoTableViewCell"];
-     }
-     // 配置 cell
-     cell.todoTitle.text = [NSString stringWithFormat:@"Todo Item %ld", indexPath.row + 1];
-     [cell.checkButton setImage:[UIImage systemImageNamed:@"star"] forState:UIControlStateNormal];
-
- //    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator; // Cell 最右侧的箭头
-     NSLog(@"MRTodoViewController Cell: %@", cell);
-     return cell;
- }
-
-
- // MARK: - UITableViewDelegate
-
- /// 行高
- - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-     return 65;
- }
-
- /// 用户点击 Cell
- - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-     // 创建一个视图
-     UIViewController *controller = [UIViewController new];
-     controller.title = [NSString stringWithFormat:@"%@", @(indexPath.row)];
-     controller.view.backgroundColor = UIColor.whiteColor;
-     // 推送视图
-     [self.navigationController pushViewController:controller animated:YES];
- }
-
-
- // MARK: - Button
-
- // 点击右上角按钮添加待办事项
- - (void)addTodoItem {
-     
- }
- */
+/// 刷新页面
+- (void)reloadView {
+    [self.todoCollectionView reloadData];
+}
 
 
 // MARK: - System Presets
